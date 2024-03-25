@@ -96,9 +96,9 @@ func (ur *UserRepository) UpdateUser(user *usermodel.User) error {
 }
 
 func (ur *UserRepository) DeleteUser(id uint) error {
-	result := ur.db.Table("users").Delete(&usermodel.User{}, id)
+	result := ur.db.Delete(&usermodel.User{}, id)
 	if result.Error != nil {
-		ur.logging.Error("Failed to delete user with ID: " + fmt.Sprint(id) + ", error: " + result.Error.Error())
+		ur.logging.Error("Failed to delete user" + result.Error.Error())
 		return result.Error
 	}
 	return nil

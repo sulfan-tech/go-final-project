@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -17,6 +18,7 @@ func main() {
 	}
 
 	g := gin.Default()
+	g.Use(cors.Default())
 
 	routes.RegisterRouter(g)
 

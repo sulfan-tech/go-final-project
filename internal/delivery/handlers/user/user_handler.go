@@ -2,11 +2,13 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"go-final-project/internal/delivery/middlewares/jwt"
 	usermodel "go-final-project/internal/domain/user/model"
 	"go-final-project/internal/domain/user/service"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -82,4 +84,21 @@ func (uh *UserHandler) UserRegister(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, usr)
+}
+
+func (uh *UserHandler) DeleteUser(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	err = uh.userService.UserDelete(context.Background(), uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+		return
+	}
+	fmt.Println("SAMPAI SINI")
+
+	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }

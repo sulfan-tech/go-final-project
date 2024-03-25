@@ -1,6 +1,7 @@
-package commentmodel
+package model
 
 import (
+	"go-final-project/internal/domain/photo/model"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -20,6 +21,8 @@ type Comment struct {
 	Message   string `validate:"required"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	Photo model.Photo `gorm:"foreignKey:PhotoID"`
 }
 
 // Validate validates the Comment struct

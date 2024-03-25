@@ -1,6 +1,7 @@
 package photorepo
 
 import (
+	"context"
 	"go-final-project/config/psql"
 	"go-final-project/internal/delivery/middlewares/logger"
 	"go-final-project/internal/domain/photo/model"
@@ -20,8 +21,11 @@ type PhotoRepository struct {
 }
 
 type PhotoRepositoryImpl interface {
-	CreatePhoto(photo *model.Photo) (*model.Photo, error)
+	CreatePhoto(ctx context.Context, photo *model.Photo) (*model.Photo, error)
 	GetPhoto() ([]model.Photo, error)
+	GetPhotoByID(id int) (*model.Photo, error)
+	UpdatePhoto(photo model.Photo) (*model.Photo, error)
+	DeletePhoto(id string) error
 }
 
 func NewInstancePhotoRepository() (PhotoRepositoryImpl, error) {
@@ -42,7 +46,7 @@ func NewInstancePhotoRepository() (PhotoRepositoryImpl, error) {
 	return instance, nil
 }
 
-func (p *PhotoRepository) CreatePhoto(photo *model.Photo) (*model.Photo, error) {
+func (p *PhotoRepository) CreatePhoto(ctx context.Context, photo *model.Photo) (*model.Photo, error) {
 	if err := p.db.Table("photo").Create(photo).Error; err != nil {
 		p.logging.Error("Failed to create photo: " + err.Error())
 		return nil, err
@@ -56,12 +60,12 @@ func (p *PhotoRepository) GetPhoto() ([]model.Photo, error) {
 		p.logging.Error("Failed to get photo: " + err.Error())
 		return nil, err
 	}
-	return nil, nil
+	return photos, nil
 }
 
-func (p *PhotoRepository) GetPhotoByID(id string) (*model.Photo, error) {
+func (p *PhotoRepository) GetPhotoByID(id int) (*model.Photo, error) {
 	var photo model.Photo
-	result := p.db.First(photo, id)
+	result := p.db.First(&photo, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -70,11 +74,11 @@ func (p *PhotoRepository) GetPhotoByID(id string) (*model.Photo, error) {
 }
 
 func (p *PhotoRepository) UpdatePhoto(photo model.Photo) (*model.Photo, error) {
-	result := p.db.Save(photo)
+	result := p.db.Save(&photo)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return &photo, result.Error
+	return &photo, nil
 }
 
 func (p *PhotoRepository) DeletePhoto(id string) error {

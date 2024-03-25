@@ -1,6 +1,7 @@
 package model
 
 import (
+	usermodel "go-final-project/internal/domain/user/model"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -13,12 +14,13 @@ func init() {
 }
 
 type SocialMedia struct {
-	ID             uint   `gorm:"primaryKey"`
-	Name           string `validate:"required"`
-	SocialMediaURL string `validate:"required"`
-	UserID         uint
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID             uint           `gorm:"primaryKey" json:"id"`
+	Name           string         `validate:"required" json:"name"`
+	SocialMediaURL string         `validate:"required" json:"social_media_url"`
+	UserID         uint           `json:"user_id"`
+	User           usermodel.User `gorm:"foreignKey:UserID" json:"user"` // Embedded User struct
+	CreatedAt      time.Time      `json:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at"`
 }
 
 func (s *SocialMedia) Validate() error {

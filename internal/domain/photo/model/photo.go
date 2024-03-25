@@ -1,6 +1,7 @@
 package model
 
 import (
+	usermodel "go-final-project/internal/domain/user/model"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -13,6 +14,7 @@ func init() {
 }
 
 // Photo represents the Photo table
+
 type Photo struct {
 	ID        uint   `gorm:"primaryKey"`
 	Title     string `validate:"required"`
@@ -21,6 +23,9 @@ type Photo struct {
 	UserID    uint
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	// Associations
+	User usermodel.User `gorm:"foreignKey:UserID"`
 }
 
 // Validate validates the Photo struct
